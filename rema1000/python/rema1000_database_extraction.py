@@ -1,2 +1,0 @@
-from extract_database import extract_known_databases
-

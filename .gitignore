@@ -5,7 +5,8 @@ filesystem.tar
 *.db
 *.db-shm
 *.db-wal
-
+*.db-journal
+*.db.lck
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

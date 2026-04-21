@@ -3,12 +3,11 @@ import tarfile as tf
 from find_database_location import find_database_location
 
 def extract_known_databases(database:str,regex_string:str,output_directory:str):
-# def extract_known_databases(database,regex_string):
     """
     Extract the databases to the provided output_directory. Make sure the output directory already exists. \n
     Please input a regexstring. The search is case insensitive.
     """
-    databases = find_database_location(database,regex_string)
+    databases=find_database_location(database,regex_string)
     if databases[0] == "zip":
         print("DATABASE IS ZIP")
         for item in databases[1]:
@@ -19,5 +18,3 @@ def extract_known_databases(database:str,regex_string:str,output_directory:str):
             for item in databases[1]:
                 print(item)
                 extract_tar.extract(item,output_directory)
-
-extract_known_databases("filesystem.tar",r".*rema1000.*.db.*","test_extractions")
