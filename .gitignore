@@ -2,6 +2,10 @@
 AFU_EXTRACTION_FFS.zip
 EXTRACTION_BFU.zip
 filesystem.tar
+*.db
+*.db-shm
+*.db-wal
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

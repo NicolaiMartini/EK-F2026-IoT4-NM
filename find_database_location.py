@@ -3,34 +3,29 @@ import zipfile as zf
 import tarfile as tf
 from find_archive_type import find_archive_type
 
-re_matches = []
 
-def find_database_location(database):
+def find_database_location(database, regexstring):
+    """
+    Find the in-archive location of desired databases.\n
+    Please input a regexstring. The search is case insensitive.
+    """
     try:
-        global re_matches
+        re_matches = []
         if find_archive_type(database) == "zip":
-            print("zipfile found")
             with zf.ZipFile(database) as zip:
                 zip_content = zf.ZipFile.namelist(zip)
                 for item in zip_content:
-                    match=re.search(".*rema1000.*\.db*", item, re.IGNORECASE)
+                    match=re.search(regexstring, item, re.IGNORECASE)
                     if match:
                         re_matches.append(match.group())
-                    
-        if find_archive_type(database) == "tar":
-            print("tarball found")
+            return "zip", re_matches
+        elif find_archive_type(database) == "tar":
             with tf.open(database) as tarball:
                 tar_content = tarball.getnames()
                 for item in tar_content:
-                    match = re.search(".*rema1000.*\.db*", item, re.IGNORECASE)
+                    match = re.search(regexstring, item, re.IGNORECASE)
                     if match:
                         re_matches.append(match.group())
-        for item in re_matches:
-            print(item)
+            return "tar", re_matches
     except Exception as e:
         print(e)
-
-
-find_database_location("AFU_EXTRACTION_FFS.zip")
-find_database_location("EXTRACTION_BFU.zip")
-find_database_location("filesystem.tar")
