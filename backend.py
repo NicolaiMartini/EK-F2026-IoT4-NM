@@ -2,7 +2,7 @@ import re
 import os
 import tarfile
 import zipfile
-import tempfile
+import sqlite3
 
 
 def find_archive_type(database: str):
@@ -60,9 +60,9 @@ def extract_known_databases(database:str,regex_string:str,output_directory:str):
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
-                        print(f"skipping '{item} - already exists")
+                        # print(f"skipping '{item} - already exists")
                         continue
-                    print(f"Extracting: {item_path}")
+                    # print(f"Extracting: {item_path}")
                     extract_zip.extract(member=item,path=output_directory)
 
         elif databases[0] == "tar":
@@ -70,23 +70,36 @@ def extract_known_databases(database:str,regex_string:str,output_directory:str):
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
-                        print(f"skipping '{item} - already exists")
+                        # print(f"skipping '{item} - already exists")
                         continue
-                    print(f"Extracting: {item_path}")
+                    # print(f"Extracting: {item_path}")
                     extract_tar.extract(member=item,path=output_directory)
     except Exception as e:
         print(e)
 
-
-# Not really useful.
-def temp_extract_databases(database:str,regex_string:str,should_delete=True):
-    """
-    Extract files to temporary directory. \n
-    Please input a regexstring. The search is case insensitive. \n
-    Will destroy itself immediately after extracting. pass should_delete=False to disable deletion.
-    """
+def list_dir_recursively(directory):
     try:
-        with tempfile.TemporaryDirectory(delete=should_delete) as tmpdir:
-            extract_known_databases(database,regex_string,tmpdir)
+        contents=[]
+        for root, dirs, files in os.walk(directory):
+            for name in files:
+                contents.append(os.path.join(root,name))
+        return contents
+    except Exception as e:
+        return e
+
+def get_db_tables(database):
+    try:
+        with sqlite3.connect(database) as sql:
+            cur=sql.cursor()
+            cur.execute("""SELECT name 
+                        FROM sqlite_master 
+                        WHERE type='table' 
+                        AND name NOT LIKE 'sqlite_%'
+                        ORDER BY name
+                        ;""")
+            tables = [row[0] for row in cur.fetchall()]
+            return tables
+    except sqlite3.Error as e:
+        print(e)
     except Exception as e:
         print(e)
