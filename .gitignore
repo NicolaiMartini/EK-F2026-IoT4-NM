@@ -1,7 +1,7 @@
 # User specified files to ignore
-AFU_EXTRACTION_FFS.zip
-EXTRACTION_BFU.zip
-filesystem.tar
+AFU.zip
+BFU.zip
+adb.tar
 *.db
 *.db-shm
 *.db-wal

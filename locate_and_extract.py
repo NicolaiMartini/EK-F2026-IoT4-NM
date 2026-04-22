@@ -22,7 +22,8 @@ def find_archive_type(database: str):
 def find_database_location(database, regexstring):
     """
     Find the in-archive location of desired databases.\n
-    Please input a regexstring. The search is case insensitive.
+    Please input the archive to search through.\n
+    Please input a regexstring to search inside the archive. The search is case insensitive.
     """
     try:
         re_matches = []
