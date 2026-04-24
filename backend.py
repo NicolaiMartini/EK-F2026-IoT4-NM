@@ -79,11 +79,14 @@ def extract_known_databases(database: str, regex_string: str, output_directory: 
 
 def list_dir_recursively(directory):
     """
-    Retrieve the contents of a directory, recursively.
+    Retrieve the contents of a directory, recursively. \n
+    Will list both dirs and files.
     """
     try:
         contents = []
         for root, dirs, files in os.walk(directory):
+            for name in dirs:
+                contents.append(os.path.join(root, name))
             for name in files:
                 contents.append(os.path.join(root, name))
         return contents

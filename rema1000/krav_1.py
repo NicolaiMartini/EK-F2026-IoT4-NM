@@ -14,28 +14,24 @@ import backend
 
 if __name__ == "__main__":
     try:
-        original_tmp = backend.list_dir_recursively("/tmp/")
-        print("Original content of /tmp/:")
-        print(original_tmp)
-        print("Extraction beginning.")
-        sleep(1)
-        for i in range(1, 9):
-            print(f"Extraction {i}")
-            with tempfile.TemporaryDirectory(delete=0) as tmpdir:
-                print("Extracting AFU databases")
-                backend.extract_known_databases(
-                    "databaser/AFU.zip", r".*{tmpdir}.*.\.db.*", f"{tmpdir}/AFU"
-                )
-                print("Extracting BFU databases")
-                backend.extract_known_databases(
-                    "databaser/BFU.zip", r".*{tmpdir}.*.\.db.*", f"{tmpdir}/BFU"
-                )
-                print("Extracting adb databases")
-                backend.extract_known_databases(
-                    "databaser/adb.tar", r".*{tmpdir}.*.\.db.*", f"{tmpdir}/adb"
-                )
-                print("Extraction complete, listing new content of /tmp/")
-                for i in backend.list_dir_recursively("/tmp/"):
-                    print(i)
+        print("\nOriginal content of /tmp/, following tmp-naming:")
+        for i in backend.list_dir_recursively("/tmp/"):
+            if "/tmp/tmp" in i:
+                print(i)
+        print("\nExtraction beginning in 2 seconds.")
+        sleep(2)
+        for i in range(1, 11):
+            with tempfile.TemporaryDirectory(delete=0) as tmpdir: # Will produce temprary folders with naming convention of starting with "tmp" along with randomized suffixes
+                print(f"\nExtraction {i}, location {tmpdir}")
+                print("\nExtracting AFU databases")
+                backend.extract_known_databases("databaser/AFU.zip", r".*rema1000.*.\.db.*", f"{tmpdir}/AFU")
+                print("\nExtracting BFU databases")
+                backend.extract_known_databases("databaser/BFU.zip", r".*rema1000.*.\.db.*", f"{tmpdir}/BFU")
+                print("\nExtracting adb databases")
+                backend.extract_known_databases("databaser/adb.tar", r".*rema1000.*.\.db.*", f"{tmpdir}/adb")
+        print("\nExtraction complete, listing content of /tmp/:")
+        for y in backend.list_dir_recursively("/tmp/"):
+            if "/tmp/tmp" in y:
+                print(y)
     except Exception as e:
         print(e)
