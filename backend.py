@@ -59,9 +59,9 @@ def extract_known_databases(database: str, regex_string: str, output_directory: 
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
-                        # print(f"skipping '{item} - already exists")
+                        print(f"skipping '{item} - already exists")
                         continue
-                    # print(f"Extracting: {item_path}")
+                    print(f"Extracting: {item_path}")
                     extract_zip.extract(member=item, path=output_directory)
 
         elif databases[0] == "tar":
@@ -69,12 +69,13 @@ def extract_known_databases(database: str, regex_string: str, output_directory: 
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
-                        # print(f"skipping '{item} - already exists")
+                        print(f"skipping '{item} - already exists")
                         continue
-                    # print(f"Extracting: {item_path}")
+                    print(f"Extracting: {item_path}")
                     extract_tar.extract(member=item, path=output_directory)
     except Exception as e:
         print(e)
+
 
 def list_dir_recursively(directory):
     """
