@@ -8,7 +8,7 @@ sys.path.insert(
 )  # Add project root directory to path
 import backend
 
-# Find all (.db, -wal, -shm, -journal) related to Rema1000.
+# Find all (.db, -wal, -shm, -journal) related to rejsekort.
 # Extract them to separate folders, depending on the original archive.
 
 
@@ -21,14 +21,14 @@ if __name__ == "__main__":
         print("\nExtraction beginning in 2 seconds.")
         sleep(2)
         for i in range(1, 2):
-            with tempfile.TemporaryDirectory(delete=0) as tmpdir: # Will produce temprary folders with naming convention of starting with "tmp" along with randomized suffixes
+            with tempfile.TemporaryDirectory(delete=1) as tmpdir: # Will produce temprary folders with naming convention of starting with "tmp" along with randomized suffixes
                 print(f"\nExtraction {i}, location {tmpdir}")
                 print("\nExtracting AFU databases")
-                backend.extract_known_databases("databaser/AFU.zip", r".*rema1000.*.\.db.*", f"{tmpdir}/AFU")
+                backend.extract_known_databases("databaser/AFU.zip", r".*rejsekort.*.\.db.*", f"{tmpdir}/AFU")
                 print("\nExtracting BFU databases")
-                backend.extract_known_databases("databaser/BFU.zip", r".*rema1000.*.\.db.*", f"{tmpdir}/BFU")
+                backend.extract_known_databases("databaser/BFU.zip", r".*rejsekort.*.\.db.*", f"{tmpdir}/BFU")
                 print("\nExtracting adb databases")
-                backend.extract_known_databases("databaser/adb.tar", r".*rema1000.*.\.db.*", f"{tmpdir}/adb")
+                backend.extract_known_databases("databaser/adb.tar", r".*rejsekort.*.\.db.*", f"{tmpdir}/adb")
         print("\nExtraction complete, listing content of /tmp/:")
         for y in backend.list_dir_recursively("/tmp/"):
             if "/tmp/tmp" in y:

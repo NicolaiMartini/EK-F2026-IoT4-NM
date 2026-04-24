@@ -37,6 +37,7 @@ def get_receipts(files_found, report_folder, seeker, wrap_text):
                     list_row=list(row)
                     list_row[2] = datetime.fromtimestamp(list_row[2]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S') # Convert from epoch ms to cet/cest
                     entries_list.append(list_row)
+                    # The following loop is to convert None to 0 (e.g. in Cashback)
                     for i in range(len(list_row)):
                         if list_row[i] is None:
                             list_row[i] = 0
