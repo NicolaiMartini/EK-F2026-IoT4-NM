@@ -3,8 +3,6 @@ import sys
 import sqlite3
 import tempfile
 from pathlib import Path
-from zoneinfo import ZoneInfo
-from datetime import datetime,timezone
 
 sys.path.insert(
     0, str(Path(__file__).resolve().parents[1])
@@ -17,7 +15,8 @@ AFU = "databaser/AFU.zip"
 
 if __name__ == "__main__":
     try:
-        for i in range(1,11):
+        # for i in range(1,11):
+        for i in range(1,2):
             print(f"\nExtracting forensics relevant information from database: attempt {i}")
             with tempfile.TemporaryDirectory(delete=1) as tmpdir:  # pass delete=False in TemporaryDirectory() to keep the files to inspect, in case output is unexpected
                 backend.extract_known_databases(AFU, REMA1000_RECEIPT_DB, tmpdir)
@@ -32,10 +31,24 @@ if __name__ == "__main__":
                 with sqlite3.connect(receipts_db) as sql:
                     cur=sql.cursor()
                     cur.execute(f"""
-                                SELECT searchText, paymentDate, paymentSource, pp_id, pp_cardType, pp_maskedPan
-                                from {receipt_table_name};
+                                SELECT *
+                                FROM {receipt_table_name};
                                 """) #paymentDate is declared in ms, /1000 to be used in datetime.
                     for item in cur.fetchall():
-                        print(item)
+                        print(f"""\n\nID: {item[0]}
+                        DisplayID: {item[1]}
+                        Payment Date (ms from epoch time): {item[2]}
+                        Payment Source: {item[3]}
+                        Store Number: {item[4]}
+                        Total Price: {item[5]}
+                        Total Price (String): {item[6]}
+                        Total Discount: {item[7]}
+                        Total VAT: {item[8]}
+                        Chargeback: {item[9]}
+                        Receipt: {item[10]}
+                        ZIP: {item[11]}
+                        Payment ID: {item[12]}
+                        Payment Card Type: {item[13]}
+                        Payment Card Masked PAN: {item[14]}""")
     except Exception as e:
         print(e)

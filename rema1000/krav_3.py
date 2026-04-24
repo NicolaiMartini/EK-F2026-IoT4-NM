@@ -4,7 +4,7 @@ import sqlite3
 import tempfile
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from datetime import datetime,timezone
+from datetime import datetime
 
 sys.path.insert(
     0, str(Path(__file__).resolve().parents[1])
