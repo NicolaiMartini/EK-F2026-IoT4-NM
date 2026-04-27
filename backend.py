@@ -5,14 +5,14 @@ import zipfile
 import sqlite3
 
 
-def find_archive_type(database: str):
+def find_archive_type(archive: str):
     """
     Determine the type of archive, from zip or tar
     """
     try:
-        if zipfile.is_zipfile(database):
+        if zipfile.is_zipfile(archive):
             return "zip"
-        elif tarfile.is_tarfile(database):
+        elif tarfile.is_tarfile(archive):
             return "tar"
         else:
             return "unknown"
@@ -20,23 +20,23 @@ def find_archive_type(database: str):
         print(e)
 
 
-def find_database_location(database, regexstring):
+def find_database_location(archive, regexstring):
     """
     Find the in-archive location of desired databases.\n
     Please input a regexstring to search inside the archive. The search is case insensitive.
     """
     try:
         re_matches = []
-        if find_archive_type(database) == "zip":
-            with zipfile.ZipFile(database) as zip:
+        if find_archive_type(archive) == "zip":
+            with zipfile.ZipFile(archive) as zip:
                 zip_content = zipfile.ZipFile.namelist(zip)
                 for item in zip_content:
                     match = re.search(regexstring, item, re.IGNORECASE)
                     if match:
                         re_matches.append(match.group())
             return "zip", re_matches
-        elif find_archive_type(database) == "tar":
-            with tarfile.open(database) as tarball:
+        elif find_archive_type(archive) == "tar":
+            with tarfile.open(archive) as tarball:
                 tar_content = tarball.getnames()
                 for item in tar_content:
                     match = re.search(regexstring, item, re.IGNORECASE)
@@ -47,15 +47,15 @@ def find_database_location(database, regexstring):
         print(e)
 
 
-def extract_known_databases(database: str, regex_string: str, output_directory: str):
+def extract_known_databases(archive: str, regex_string: str, output_directory: str):
     """
     Extract the databases to the provided output_directory. Make sure the output directory already exists. \n
     Please input a regexstring. The search is case insensitive.
     """
     try:
-        databases = find_database_location(database, regex_string)
+        databases = find_database_location(archive, regex_string)
         if databases[0] == "zip":
-            with zipfile.ZipFile(database) as extract_zip:
+            with zipfile.ZipFile(archive) as extract_zip:
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
@@ -65,7 +65,7 @@ def extract_known_databases(database: str, regex_string: str, output_directory: 
                     extract_zip.extract(member=item, path=output_directory)
 
         elif databases[0] == "tar":
-            with tarfile.open(database) as extract_tar:
+            with tarfile.open(archive) as extract_tar:
                 for item in databases[1]:
                     item_path = os.path.join(output_directory, item)
                     if os.path.exists(item_path):
@@ -86,7 +86,8 @@ def list_dir_recursively(directory):
         contents = []
         for root, dirs, files in os.walk(directory):
             for name in dirs:
-                contents.append(os.path.join(root, name))
+                continue
+                # contents.append(os.path.join(root, name))
             for name in files:
                 contents.append(os.path.join(root, name))
         return contents

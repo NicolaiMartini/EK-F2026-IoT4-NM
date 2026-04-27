@@ -9,28 +9,26 @@ import backend
 # Find all (.db, -wal, -shm, -journal) related to rejsekort.
 # Extract them to separate folders, depending on the original archive.
 
-search_string = r".*mmssms.*\.db.*"
+search_string = r"Dump/data/data/com.android.providers.telephony/databases/.*\.(db|db.*)$"
+databases=["databaser/AFU.zip","databaser/BFU.zip","databaser/adb.tar"]
 
 if __name__ == "__main__":
     try:
         print("\nOriginal content of /tmp/, following tmp-naming:")
-        for i in backend.list_dir_recursively("/tmp/"):
-            if "/tmp/tmp" in i:
-                print(i)
+        for dir in backend.list_dir_recursively("/tmp/"):
+            if "/tmp/tmp" in dir:
+                print(dir)
         print("\nExtraction beginning in 2 seconds.")
         sleep(2)
-        for i in range(1, 2):
-            with tempfile.TemporaryDirectory(delete=0) as tmpdir: # Will produce temprary folders with naming convention of starting with "tmp" along with randomized suffixes
-                print(f"\nExtraction {i}, location {tmpdir}")
-                print("\nExtracting AFU databases")
-                backend.extract_known_databases("databaser/AFU.zip", search_string, f"{tmpdir}/AFU")
-                print("\nExtracting BFU databases")
-                backend.extract_known_databases("databaser/BFU.zip", search_string, f"{tmpdir}/BFU")
-                print("\nExtracting adb databases")
-                backend.extract_known_databases("databaser/adb.tar", search_string, f"{tmpdir}/adb")
+        for index in range(1, 2):
+            with tempfile.TemporaryDirectory(delete=0) as tmpdir:
+                print(f"\nExtraction {index}, location {tmpdir}")
+                for db in databases:
+                    print(f"Extracting {Path(db).stem}")
+                    backend.extract_known_databases(db,search_string,f"{tmpdir}/{Path(db).stem}")
         print("\nExtraction complete, listing content of /tmp/:")
-        for y in backend.list_dir_recursively("/tmp/"):
-            if "/tmp/tmp" in y:
-                print(y)
+        for dir in backend.list_dir_recursively("/tmp/"):
+            if "/tmp/tmp" in dir:
+                print(dir)
     except Exception as e:
         print(e)

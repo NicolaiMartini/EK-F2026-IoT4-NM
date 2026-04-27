@@ -7,6 +7,9 @@ adb.tar
 *.db-wal
 *.db-journal
 *.db.lck
+*a
+*a-shm
+*a-wal
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
