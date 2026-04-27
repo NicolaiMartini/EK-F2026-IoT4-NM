@@ -8,7 +8,7 @@ __artifacts_v2__ = {
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "Rema1000 | Scan & Go",
         "notes": "forensics data of supermarket habit and location insights.",
-        "paths": "*/Dump/data/data/dk.rema1000.app/databases/receipts.db*",
+        "paths": ("*/Dump/data/data/dk.rema1000.app/databases/receipts.db*",),
         "function": "get_receipts"
     }
 }
@@ -35,12 +35,11 @@ def get_receipts(files_found, report_folder, seeker, wrap_text):
                 entries_list=[]
                 for row in rows:
                     list_row=list(row)
-                    list_row[2] = datetime.fromtimestamp(list_row[2]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S') # Convert from epoch ms to cet/cest
-                    entries_list.append(list_row)
-                    # The following loop is to convert None to 0 (e.g. in Cashback)
                     for i in range(len(list_row)):
                         if list_row[i] is None:
-                            list_row[i] = 0
+                            list_row[i]=0
+                    list_row[2] = datetime.fromtimestamp(list_row[2]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S') # Convert from epoch ms to cet/cest
+                    entries_list.append(list_row)
                 report = ArtifactHtmlReport('Rema1000 | Scan & Go Receipts')
                 report.start_artifact_report(report_folder, 'Rema1000 | Scan & Go')
                 report.add_script()
