@@ -4,9 +4,7 @@ import sqlite3
 import tempfile
 from pathlib import Path
 
-sys.path.insert(
-    0, str(Path(__file__).resolve().parents[1])
-)  # Add project root directory to path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # Add project root directory to path
 import backend
 
 REMA1000_RECEIPT_DB = r".*rema1000.*receipts\.db.*"  # Find all .db, -wal, -shm and -journal for a specific db. This is crucial - WAL is standard in most android phones today, and excluding the .db-extensions will probably provide an empty db.

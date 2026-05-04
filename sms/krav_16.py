@@ -1,15 +1,15 @@
 __artifacts_v2__ = {
-    "rema1000_receipt": {
-        "name": "Rema1000 Receipt",
-        "description": "Extracts rema 1000 receipts from the android app 'Rema1000 | Scan & Go'. Includes location, date and time, and payment method.",
+    "android_sms": {
+        "name": "Android SMS PoC",
+        "description": "Extract SMS from Android, convert timestamp to UTC ISO 8601.",
         "author": "Nicolai Martini",
         "version": "0.1",
-        "date": "2026-04-24",
+        "date": "2026-05-04",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "EK F2026 IoT4 NM",
-        "notes": "forensics data of supermarket habit and location insights.",
-        "paths": ("*/dk.rema1000.app/databases/receipts.db*",),
-        "function": "get_receipts"
+        "notes": "PoC for extracting SMS from Android MMSSMS database",
+        "paths": ("*/com.android.providers.telephony/databases/mmssms.db*",),
+        "function": "get_sms"
     }
 }
 
@@ -19,7 +19,7 @@ from scripts.artifact_report import ArtifactHtmlReport
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly
 
 @artifact_processor
-def get_receipts(files_found, report_folder, seeker, wrap_text):  
+def get_sms(files_found, report_folder, seeker, wrap_text):  
     for file_found in files_found:
         file_found = str(file_found)
         if file_found.endswith('.db'):
@@ -27,7 +27,7 @@ def get_receipts(files_found, report_folder, seeker, wrap_text):
             cur = db.cursor()
             cur.execute(f"""
                         SELECT *
-                        FROM ReceiptEntity;
+                        FROM sms;
                         """)
             rows=cur.fetchall()
             entries=len(rows)
@@ -38,13 +38,13 @@ def get_receipts(files_found, report_folder, seeker, wrap_text):
                     for i in range(len(list_row)):
                         if list_row[i] is None:
                             list_row[i]=0
-                    list_row[2] = datetime.fromtimestamp(list_row[2]/1000, tz=ZoneInfo("UTC")).strftime('%Y-%m-%dT%H:%M:%SZ')
+                    list_row[5] = datetime.fromtimestamp(list_row[5]/1000, tz=ZoneInfo("UTC")).strftime('%Y-%m-%dT%H:%M:%SZ')
                     entries_list.append(list_row)
-                report = ArtifactHtmlReport('Rema1000 database')
-                report.start_artifact_report(report_folder, 'Rema1000 | Scan & Go receipts')
+                report = ArtifactHtmlReport('Android SMS database')
+                report.start_artifact_report(report_folder, 'SMS Android Proof of Concept')
                 report.add_script()
-                data_headers = ('ID','Display ID','Payment Date','Payment Source','Store Number','Total Price','Total Price String','Total Discount','Total VAT','Chargeback',' Search Text','ZIP','PP ID','PP Card','PP Masked PAN')
+                data_headers = ('_id', 'thread_id', 'address', 'person', 'date', 'date_sent', 'protocol', 'read', 'status', 'type', 'reply_path_present', 'subject', 'body', 'service_center', 'locked', 'sub_id', 'error_code', 'creator', 'seen', 'priority')
                 report.write_artifact_data_table(data_headers,entries_list,file_found,html_escape=False)
                 report.end_artifact_report()
             else:
-                logfunc('No Rema1000 | Scan & Go data available')
+                logfunc('No android sms data avilable.')

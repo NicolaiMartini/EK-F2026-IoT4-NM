@@ -1,7 +1,8 @@
-import re
 import sys
 import sqlite3
 import tempfile
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 sys.path.insert(
@@ -26,14 +27,16 @@ if __name__ == "__main__":
                         with sqlite3.connect(database) as sql:
                             cur=sql.cursor()
                             cur.execute(f"""
-                                        SELECT *
+                                        SELECT address,date,body,creator
                                         FROM {table_sms}
                                         LIMIT 20;
                                         """)
-                            [[print(cell) for cell in row] for row in cur.fetchall()]
-                            # for row in cur.fetchall():
-                                # for table_header, cell_content in zip(backend.get_table_headers(database,table_sms),row):
-                                #     display = 0 if cell_content is None else cell_content
-                                # print(f"{:>20}: {display:>45}")
+                            for row in cur.fetchall():
+                                print(f"""
+                                      Sender:          {row[0][-4:]}
+                                      Date in UTC:     {datetime.fromtimestamp(row[1]/1000, tz=ZoneInfo("UTC")).strftime('%Y-%m-%dT%H:%M:%SZ')}
+                                      Text:            {row[2]}
+                                      App used:        {row[3]}
+                                      """)
     except Exception as e:
         print(e)

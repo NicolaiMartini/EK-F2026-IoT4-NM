@@ -10,7 +10,7 @@ import backend
 # Extract them to separate folders, depending on the original archive.
 
 search_string = r"Dump/data/data/com.android.providers.telephony/databases/.*\.(db|db.*)$"
-databases=["databaser/AFU.zip","databaser/BFU.zip","databaser/adb.tar"]
+archives=["databaser/AFU.zip","databaser/BFU.zip","databaser/adb.tar"]
 
 if __name__ == "__main__":
     try:
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         for index in range(1, 2):
             with tempfile.TemporaryDirectory(delete=0) as tmpdir:
                 print(f"\nExtraction {index}, location {tmpdir}")
-                for db in databases:
+                for db in archives:
                     print(f"Extracting {Path(db).stem}")
                     backend.extract_known_databases(db,search_string,f"{tmpdir}/{Path(db).stem}")
         print("\nExtraction complete, listing content of /tmp/:")
