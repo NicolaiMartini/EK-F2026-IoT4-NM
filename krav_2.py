@@ -8,6 +8,6 @@ if __name__ == "__main__":
     try:
         print("\nExtraction beginning in 2 seconds.")
         sleep(2)
-        backend.extract_known_databases(ARCHIVE,SEARCH_STRING,"/home/martinux/Documents/Extraction/")
+        backend.get_known_databases(ARCHIVE,SEARCH_STRING,"/home/martinux/Documents/Extraction/")
     except Exception as e:
         print(e)
