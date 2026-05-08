@@ -87,7 +87,6 @@ def list_dir_recursively(directory):
         for root, dirs, files in os.walk(directory):
             for name in dirs:
                 continue
-                # contents.append(os.path.join(root, name))
             for name in files:
                 contents.append(os.path.join(root, name))
         return contents
@@ -108,9 +107,7 @@ def get_db_tables(database):
                         AND name NOT LIKE 'sqlite_%'
                         ORDER BY name
                         ;""")
-            tables = [
-                row[0] for row in cur.fetchall()
-            ]  # fetch only first item in 1-item tuple, of each row
+            tables = [row[0] for row in cur.fetchall()]
             return tables
     except sqlite3.Error as e:
         print(e)

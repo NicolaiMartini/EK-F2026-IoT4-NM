@@ -1,4 +1,5 @@
 import sys
+import json
 import sqlite3
 import tempfile
 from pathlib import Path
@@ -24,9 +25,15 @@ if __name__ == "__main__":
                             cur.execute(f"""
                                         SELECT *
                                         FROM {messages_table}
-                                        LIMIT 20;
+                                        LIMIT 1;
                                         """)
                             for item in cur.fetchall():
-                                
+                                decoded=item[6][1:].decode('utf-8')
+                                data=json.loads(decoded)
+                                print(data)
+                                # print(data["id"])
+                                # print(data["message"]["channel_id"])
+                                # print(data['message']['content'])
+                                # print("-------------------------------------------")
     except Exception as e:
         print(e)

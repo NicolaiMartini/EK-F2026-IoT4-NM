@@ -9,7 +9,7 @@ import backend
 # Find all (.db, -wal, -shm, -journal) related to rejsekort.
 # Extract them to separate folders, depending on the original archive.
 
-search_string = r"Dump/data/data/com.android.providers.telephony/databases/.*\.(db|db.*)$"
+search_string = r".*/com.android.providers.telephony/databases/.*\.(db|db.*)$"
 archives=["databaser/AFU.zip","databaser/BFU.zip","databaser/adb.tar"]
 
 if __name__ == "__main__":
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         print("\nExtraction beginning in 2 seconds.")
         sleep(2)
         for index in range(1, 2):
-            with tempfile.TemporaryDirectory(delete=0) as tmpdir:
+            with tempfile.TemporaryDirectory(delete=1) as tmpdir:
                 print(f"\nExtraction {index}, location {tmpdir}")
                 for db in archives:
                     print(f"Extracting {Path(db).stem}")
