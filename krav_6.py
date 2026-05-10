@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "rema1000_receipt": {
         "name": "Rema1000 Receipt",
-        "description": "Extracts rema 1000 receipts from the android app 'Rema1000 | Scan & Go'. Includes location, date and time, and payment method.",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All raw data.",
         "author": "Nicolai Martini",
         "version": "0.1",
         "date": "2026-04-24",
