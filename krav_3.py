@@ -1,7 +1,3 @@
-"""
-Status: WIP
-"""
-
 from time import sleep
 import backend
 
