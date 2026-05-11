@@ -1,13 +1,9 @@
+import datetime
 import backend
-from time import sleep
-
-SEARCH_STRING=r".*rema1000.*\/databases\/.*\.db.*$"
-ARCHIVE="AFU.zip"
 
 if __name__ == "__main__":
     try:
-        print("\nExtraction beginning in 2 seconds.")
-        sleep(2)
-        backend.get_known_databases(ARCHIVE,SEARCH_STRING,"/home/martinux/Documents/Extraction/")
+        print("Extracting")
+        backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$",f"/tmp/{datetime.datetime.now()}/")
     except Exception as e:
         print(e)

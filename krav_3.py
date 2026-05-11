@@ -1,13 +1,11 @@
-from time import sleep
 import backend
-
-SEARCH_STRING=r".*rema1000.*\/databases\/.*\.db.*$"
-ARCHIVE="AFU.zip"
+import datetime
+from time import sleep
 
 if __name__ == "__main__":
     try:
         print("EXTRACTING TO SPECIFIED LOCATION")
-        for database in backend.get_known_databases(ARCHIVE,SEARCH_STRING,"/home/martinux/Downloads/Extraction"):
+        for database in backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$",f"/tmp/{datetime.datetime.now()}/"):
             if database.endswith('.db'):
                 print(database)
                 print(backend.get_db_tables(database))
@@ -18,7 +16,7 @@ if __name__ == "__main__":
                 sleep(2)
         print("EXTRACTING TO TEMP")
         sleep(2)
-        for database in backend.get_known_databases(ARCHIVE,SEARCH_STRING):
+        for database in backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$"):
             if database.endswith('.db'):
                 print(database)
                 print(backend.get_db_tables(database))
