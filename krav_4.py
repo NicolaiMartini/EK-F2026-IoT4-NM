@@ -36,14 +36,14 @@ if __name__ == "__main__":
                                 """)
                     for receipt in cur.fetchall():
                         location=f"{receipt[3].split(";")[1].capitalize()}, {receipt[4]}, {receipt[3].split(";")[2].capitalize()}"
-                        date_time=f"{datetime.fromtimestamp(receipt[0]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S')}, local time"
+                        date_time=f"{datetime.fromtimestamp(receipt[0]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S')}"
                         items=receipt[3].split(";")[3:]
                         receipt_items=[item for item in items if item in available_products]
                         print(f"""
-                              Date and time: {date_time}
+                              Date and time (DK): {date_time}
                               Location: {location}
-                              Items: {receipt_items}
-                              Total price: {receipt[2]/100:.2f}
+                              Items: {", ".join(receipt_items)}
+                              Total price: {receipt[2]/100:.2f} dkk
                               Payment card: {receipt[1]}
                               Card type: {receipt[5]}
                               Card PAN: {receipt[6]}
