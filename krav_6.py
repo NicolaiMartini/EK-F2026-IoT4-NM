@@ -1,5 +1,5 @@
 __artifacts_v2__ = {
-    "rema1000_receipt": {
+    "rema1000_receipt_raw": {
         "name": "Rema1000 Receipts, raw",
         "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All raw data.",
         "author": "Nicolai Martini",

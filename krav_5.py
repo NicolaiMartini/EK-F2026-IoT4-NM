@@ -2,13 +2,11 @@ import sqlite3
 import backend
 from zoneinfo import ZoneInfo
 from datetime import datetime
-from time import sleep
 
 
 if __name__ == "__main__":
     try:
         available_products=[]
-        purchased_products=[]
         for database in backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$"):
             if database.endswith('shopdatabase.db'):
                 with sqlite3.connect(database) as sql:
@@ -41,7 +39,7 @@ if __name__ == "__main__":
                               Location: {location}
                               Items: {", ".join(receipt_items)}
                               Total price: {receipt[2]/100:.2f} dkk
-                              Payment card: {receipt[1]}
+                              Payment method: {receipt[1]}
                               Card type: {receipt[5]}
                               Card PAN: {receipt[6]}
                               """)                                
