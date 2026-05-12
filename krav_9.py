@@ -1,10 +1,7 @@
 import sqlite3
 import backend
 import folium
-from zoneinfo import ZoneInfo
-from datetime import datetime
 import pandas as pd
-import plotly.express as px
 
 
 if __name__ == "__main__":
