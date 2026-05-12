@@ -1,14 +1,14 @@
 __artifacts_v2__ = {
     "rema1000_receipt_prettified": {
         "name": "Rema1000 Receipts, prettified",
-        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All data is focused and prettified",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All data is focused and prettified using supportive data from */dk.rema1000.app/databases/shopdatabase.db.",
         "author": "Nicolai Martini",
         "version": "0.2",
         "date": "2026-05-11",
         "requirements": "Cellebrite UFED After First Unlock data acquisition, or similar",
         "category": "EK F2026 IoT4 NM",
         "notes": "forensics data of supermarket habit and location insights.",
-        "paths": ("*/dk.rema1000.app/databases/receipts.db*","*/dk.rema1000.app/databases/shopdatabase.db*"),
+        "paths": ("*/dk.rema1000.app/databases/shopdatabase.db*","*/dk.rema1000.app/databases/receipts.db*"),
         "function": "get_receipts_prettified"
     }
 }
@@ -17,18 +17,14 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, get_file_path, logfunc
 
-# def get_product_inventory():
-#     try:
-
-
+available_products=[]
 
 @artifact_processor
 def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):  
     source_path = get_file_path(files_found, "receipts.db")  
-    available_products=[]
     for file_found in files_found:
         if file_found.endswith('shopdatabase.db'):
-            # available_products=[]
+            global available_products
             prod_db=open_sqlite_db_readonly(file_found)
             prod_cur=prod_db.cursor()
             prod_cur.execute(f"""
@@ -59,6 +55,8 @@ def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):
                     for i in range(len(list_row)):
                         if list_row[i] is None:
                             list_row[i]="None"
+                    print(available_products[:10])
+                    print(list_row)
                     prettified_list[0]=f"{datetime.fromtimestamp(list_row[0]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S')}"
                     prettified_list[1]= f"{list_row[3].split(";")[1].capitalize()}, {list_row[4]}, {list_row[3].split(";")[2].capitalize()}"
                     split_items=list_row[3].split(";")[3:]
@@ -69,5 +67,5 @@ def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):
                     prettified_list[6]=list_row[6]
                     entries_list.append(prettified_list)
                 return data_headers, entries_list, source_path
-            else:
-                logfunc('No Rema1000 | Scan & Go data available')
+    else:
+        logfunc('No Rema1000 | Scan & Go data available')
