@@ -1,7 +1,7 @@
 __artifacts_v2__ = {
     "rema1000_receipt_prettified": {
         "name": "Rema1000 Receipts, prettified",
-        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All data is focused and prettified using supportive data from */dk.rema1000.app/databases/shopdatabase.db.",
+        "description": "Extracts Rema1000 receipts from the android app 'Rema1000 | Scan & Go'. All data is focused and prettified, and supportive data from */dk.rema1000.app/databases/shopdatabase.db is used for items column.",
         "author": "Nicolai Martini",
         "version": "0.2",
         "date": "2026-05-11",
@@ -55,8 +55,6 @@ def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):
                     for i in range(len(list_row)):
                         if list_row[i] is None:
                             list_row[i]="None"
-                    print(available_products[:10])
-                    print(list_row)
                     prettified_list[0]=f"{datetime.fromtimestamp(list_row[0]/1000, tz=ZoneInfo("Europe/Copenhagen")).strftime('%Y-%m-%d %H:%M:%S')}"
                     prettified_list[1]= f"{list_row[3].split(";")[1].capitalize()}, {list_row[4]}, {list_row[3].split(";")[2].capitalize()}"
                     split_items=list_row[3].split(";")[3:]
