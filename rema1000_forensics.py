@@ -1,10 +1,3 @@
-# """
-# CLI-venlige script til digital efterforskning af 'Rema1000 | Scan & Go' databaser datasikriet fra Android-telefoner.
-# Scriptet er udarbejdet baseret på en 'After First Unlock'-datasikring fra Cellebrite UFED.
-
-# Brug '-h' for at se muligheder.
-# """
-
 import re
 import os
 import sys
@@ -117,10 +110,12 @@ def retrieve_table_content(database,table):
 def main():
     try:
         parser = argparse.ArgumentParser(
-            description="Efterforskningsværktøj til android-databaser fra 'Rema1000 | Scan & Go'.",
+            description="""Efterforskningsværktøj til android-databaser fra 'Rema1000 | Scan & Go'.
+Stier kan være fulde eller relative.
+            """,
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
-            python3 rema1000_forensics.py --archive <fuld/sti/til/filnavn.zip> --yderligere-argumenter <argument>
+            python3 rema1000_forensics.py --archive <sti/til/filnavn.zip> --yderligere-argumenter <argument>
             Eksempel:
             python3 rema1000_forensics.py --archive /home/peter/Downloads/android.zip --sha256
             python3 rema1000_forensics.py --archive ~/Documents/AFU.zip --search
@@ -130,56 +125,57 @@ def main():
         parser.add_argument(
             "--archive",
             default=None,
+            metavar=("FILENAME.ZIP"),
             help="Angiv stien til den zip-fil der skal benyttes."
         )
         
         parser.add_argument(
             "--output_location",
             default=None,
+            metavar=("PATH/TO/OUTPUT/FOLDER/"),
             help="Angiv stien hvor dataen skal gemmes"
         )
         
         parser.add_argument(
             "--sha256sum",
             action="store_true",
-            help="Opnå Sha256-sum af den angivne fil."
+            help="Udregn SHA256-sum af den angivne fil."
         )
         
         parser.add_argument(
             "--search",
             action="store_true",
-            help="--search benyttes til at søge den angivne arkiv-fil for Rema1000-databaser."
+            help="Bruges til at søge den angivne arkiv-fil for Rema1000-databaser."
         )
         
         parser.add_argument(
             "--extract",
             action="store_true",
-            help="--extract bruges til at extracte filen til tmp/%%TEMP%%, afhængig af OS, eller til en specificeret lokation (hvis brugt med --output-location)"
+            help="Udhent filen til tmp/%%TEMP%%, afhængig af OS, eller til en specificeret lokation (hvis brugt med --output-location)"
         )
         
         parser.add_argument(
             "--get_database_tables",
             default=None,
-            help="--get_database_tables bruges til at udhente database-tabellerne fra de databaser der er udhentet fra datasikringen."
+            metavar=("DATABASE"),
+            help="Bruges til at udhente database-tabellerne fra de databaser der er udhentet fra datasikringen."
         )
         
         parser.add_argument(
             "--get_table_headers",
             default=None,
             nargs=2,
-            help="--get_table_headers bruges til at udhente tabellernes kolonne-overskrifter."
+            metavar=("DATABASE","TABLE"),
+            help="Bruges til at udhente tabellernes kolonne-overskrifter."
         )
         
         parser.add_argument(
             "--get_table_content",
             default=None,
             nargs=3,
-            help="--get_table_content bruges til at udhente alt fra en db-table. Specificer database, table og antal rækker der skal outputtes i terminalen. Brug 0 som diste argument, for at få printet samtlige rækker i tabellen."
+            metavar=("DATABASE","TABLE","ROW_AMOUNT"),
+            help="Bruges til at udhente alt fra en db-table. Specificer database, table og antal rækker der skal outputtes i terminalen. Brug 0 som diste argument, for at få printet samtlige rækker i tabellen."
         )
-        
-        # parser.add_argument(
-        #     "--get_table_content"
-        # )
         
         args = parser.parse_args()
             
@@ -222,15 +218,8 @@ def main():
                     for i in range(0,len(column_names)):
                         print(f"{column_names[i]}: {content[i]}")
         
-        # if args.get_receipt_table:
-            
-        
     except Exception as e:
         logger.error(f"Error has occured: {e}",exc_info=True)
     
 if __name__ == "__main__":
     main()
-
-
-# import folium # requires install (pip or global). To be used with krav 9 and 10
-# import pandas # requires install (pip or global). To be used with krav 9 and 10
