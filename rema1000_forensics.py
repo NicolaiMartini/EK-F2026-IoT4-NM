@@ -81,6 +81,37 @@ def extract_databases(archive,output_location=None):
                     database_list.append(database_path)
                 return database_list
                 
+def retrieve_database_tables(database):
+    with sqlite3.connect(database) as sql:
+        cur=sql.cursor()
+        cur.execute("""
+                    SELECT name
+                    FROM sqlite_master
+                    WHERE type='table'
+                    AND name NOT LIKE 'sqlite_%'
+                    ORDER BY name;
+                    """)
+        tables=[row[0] for row in cur.fetchall()]
+        return tables
+    
+def retrieve_table_headers(database,table):
+    with sqlite3.connect(database) as sql:
+        cur=sql.cursor()
+        cur.execute(f"""
+                    SELECT *
+                    FROM {table};
+                    """)
+        column_headers = [description[0] for description in cur.description]
+        return column_headers
+
+def retrieve_table_content(database,table):
+    with sqlite3.connect(database) as sql:
+        cur=sql.cursor()
+        cur.execute(f"""
+                    SELECT *
+                    FROM {table};
+                    """)
+        return cur.fetchall()
 
     
 def main():
@@ -123,7 +154,27 @@ def main():
         parser.add_argument(
             "--extract",
             action="store_true",
-            help="--extract-temp bruges til at extracte filen til tmp/%%TEMP%%, afhængig af OS."
+            help="--extract bruges til at extracte filen til tmp/%%TEMP%%, afhængig af OS, eller til en specificeret lokation (hvis brugt med --output-location)"
+        )
+        
+        parser.add_argument(
+            "--get_database_tables",
+            default=None,
+            help="--get_database_tables bruges til at udhente database-tabellerne fra de databaser der er udhentet fra datasikringen."
+        )
+        
+        parser.add_argument(
+            "--get_table_headers",
+            default=None,
+            nargs=2,
+            help="--get_table_headers bruges til at udhente tabellernes kolonne-overskrifter."
+        )
+        
+        parser.add_argument(
+            "--get_table_content",
+            default=None,
+            nargs=2,
+            help="--get_table_content bruges til at udhente alt fra en db-table. Der bliver printet 10 af de seneste rækker fra databasen."
         )
         
         args = parser.parse_args()
@@ -140,6 +191,23 @@ def main():
                 
         if args.extract:
             extract_databases(archive=args.archive,output_location=args.output_location)
+            
+        if args.get_database_tables:
+            tables=retrieve_database_tables(args.get_database_tables)
+            for table in tables:
+                print(table)
+                
+        if args.get_table_headers:
+            column_names=retrieve_table_headers(database=args.get_table_headers[0],table=args.get_table_headers[1])
+            for header in column_names:
+                print(header)
+                
+        if args.get_table_content:
+            column_names=retrieve_table_headers(database=args.get_table_content[0],table=args.get_table_content[1])
+            print(column_names)
+            database_content=retrieve_table_content(database=args.get_table_content[0],table=args.get_table_content[1])
+            for content in database_content[:10]:
+                print(content)
         
     except Exception as e:
         logger.error(f"Error has occured: {e}",exc_info=True)
