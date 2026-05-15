@@ -1,6 +1,5 @@
 import re
 import os
-import sys
 import logging
 import hashlib
 import argparse
@@ -8,7 +7,6 @@ import zipfile
 import tempfile
 import sqlite3
 import datetime
-import zoneinfo
 
 logging.basicConfig(
     level=logging.INFO,
