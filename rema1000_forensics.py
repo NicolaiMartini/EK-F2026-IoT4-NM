@@ -120,7 +120,7 @@ def main():
             description="Efterforskningsværktøj til android-databaser fra 'Rema1000 | Scan & Go'.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
-            python3 rema1000_forensics.py --archive <ful/sti/til/filnavn.zip> --yderligere-argumenter <argument>
+            python3 rema1000_forensics.py --archive <fuld/sti/til/filnavn.zip> --yderligere-argumenter <argument>
             Eksempel:
             python3 rema1000_forensics.py --archive /home/peter/Downloads/android.zip --sha256
             python3 rema1000_forensics.py --archive ~/Documents/AFU.zip --search
@@ -129,7 +129,7 @@ def main():
         
         parser.add_argument(
             "--archive",
-            required=True,
+            default=None,
             help="Angiv stien til den zip-fil der skal benyttes."
         )
         
@@ -173,9 +173,13 @@ def main():
         parser.add_argument(
             "--get_table_content",
             default=None,
-            nargs=2,
-            help="--get_table_content bruges til at udhente alt fra en db-table. Der bliver printet 10 af de seneste rækker fra databasen."
+            nargs=3,
+            help="--get_table_content bruges til at udhente alt fra en db-table. Specificer database, table og antal rækker der skal outputtes i terminalen. Brug 0 som diste argument, for at få printet samtlige rækker i tabellen."
         )
+        
+        # parser.add_argument(
+        #     "--get_table_content"
+        # )
         
         args = parser.parse_args()
             
@@ -203,11 +207,23 @@ def main():
                 print(header)
                 
         if args.get_table_content:
-            column_names=retrieve_table_headers(database=args.get_table_content[0],table=args.get_table_content[1])
-            print(column_names)
-            database_content=retrieve_table_content(database=args.get_table_content[0],table=args.get_table_content[1])
-            for content in database_content[:10]:
-                print(content)
+            if int(args.get_table_content[2])==0:
+                column_names=retrieve_table_headers(database=args.get_table_content[0],table=args.get_table_content[1])
+                database_content=retrieve_table_content(database=args.get_table_content[0],table=args.get_table_content[1])
+                for content in database_content:
+                    print("\n")
+                    for i in range(0,len(column_names)):
+                        print(f"{column_names[i]}: {content[i]}")
+            if int(args.get_table_content[2])>0:
+                column_names=retrieve_table_headers(database=args.get_table_content[0],table=args.get_table_content[1])
+                database_content=retrieve_table_content(database=args.get_table_content[0],table=args.get_table_content[1])
+                for content in database_content[:int(args.get_table_content[2])]:
+                    print("\n")
+                    for i in range(0,len(column_names)):
+                        print(f"{column_names[i]}: {content[i]}")
+        
+        # if args.get_receipt_table:
+            
         
     except Exception as e:
         logger.error(f"Error has occured: {e}",exc_info=True)
