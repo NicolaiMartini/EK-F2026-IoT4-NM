@@ -65,19 +65,21 @@ def extract_databases(archive,output_location=None):
                 database_list.append(database_path)
             return database_list
     if output_location is None:
-        with tempfile.TemporaryDirectory(prefix="EXTRACTION_") as tmpdir:
+        databases = find_database_location(archive)
+        with tempfile.TemporaryDirectory(delete=0,prefix=f"{datetime.datetime.now()}_") as tmpdir:
             print(f"Location: {tmpdir}")
             database_list = []
-            for database in databases:
-                database_path = os.path.join(output_location,database)
-                if os.path.exists(database_path):
-                    print(f"springer '{database_path}' over - findes allerede.")
+            with zipfile.ZipFile(archive) as zip_to_extract:
+                for database in databases:
+                    database_path = os.path.join(tmpdir,database)
+                    if os.path.exists(database_path):
+                        print(f"springer '{database_path}' over - findes allerede.")
+                        database_list.append(database_path)
+                        continue
+                    print(f"Udhenter {database_path}")
+                    zip_to_extract.extract(member=database,path=tmpdir)
                     database_list.append(database_path)
-                    continue
-                print(f"Udhenter {database_path}")
-                zip_to_extract.extract(member=database,path=output_location)
-                database_list.append(database_path)
-            return database_list
+                return database_list
                 
 
     
@@ -107,7 +109,7 @@ def main():
         )
         
         parser.add_argument(
-            "--sha256",
+            "--sha256sum",
             action="store_true",
             help="Opnå Sha256-sum af den angivne fil."
         )
@@ -125,27 +127,20 @@ def main():
         )
         
         args = parser.parse_args()
-        
-        if args.archive:
-            print(f"Arkiv er: {args.archive}")
             
-        elif args.sha256:
+        if args.sha256sum:
             print(f"Udregner SHA256-sum af: {args.archive}")
             print(calculate_sha256sum(args.archive))
             
-        elif args.search:
+        if args.search:
             print(f"Søger i: {args.archive}")
             databases=find_database_location(args.archive)
             for database in databases:
                 print(database)
                 
-        elif args.extract:
+        if args.extract:
             extract_databases(archive=args.archive,output_location=args.output_location)
         
-        else:
-            parser.print_help()
-            sys.exit(1)
-    
     except Exception as e:
         logger.error(f"Error has occured: {e}",exc_info=True)
     
