@@ -65,6 +65,6 @@ if __name__ == "__main__":
                                 icon=folium.Icon(color="purple")
                                 ).add_to(m)
                             pins.append(store["Store number"])
-                    m.save("visited_rema1000_elaborated.html")
+                    m.save(f"krav_10_{datetime.now()}.html")
     except Exception as e:
         print(e)

@@ -1,6 +1,7 @@
 import sqlite3
 import backend
 import folium
+import datetime
 import pandas as pd
 
 
@@ -48,6 +49,6 @@ if __name__ == "__main__":
                                 icon=folium.Icon(color="purple")
                                 ).add_to(m)
                             pins.append(store["Store number"])
-                    m.save("visited_rema1000.html")
+                    m.save(f"krav_09_{datetime.datetime.now()}.html")
     except Exception as e:
         print(e)
