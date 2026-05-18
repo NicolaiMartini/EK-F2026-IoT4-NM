@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 import logging
 import hashlib
 import argparse
@@ -20,14 +21,35 @@ logging.basicConfig(
 logger=logging.getLogger(__name__)
 
 REGEX_SEARCH_STRING=r".*rema1000.*\/databases\/.*\.db.*$"
-
+    
 def calculate_sha256sum(filename):
     sha256_hash = hashlib.sha256()
-    with open(filename,"rb") as file:
-        for byte_block in iter(lambda: file.read(4096), b""):
-            sha256_hash.update(byte_block)
-    return sha256_hash.hexdigest()
+    file_size = os.path.getsize(filename)
+    bytes_read = 0
     
+    print(f"Behandler {filename} ({file_size} bytes)...")
+    
+    with open(filename, "rb") as f:
+        while True:
+            byte_block = f.read(4096)
+            if not byte_block:
+                break
+            
+            sha256_hash.update(byte_block)
+            bytes_read += len(byte_block)
+            
+            percent = (bytes_read / file_size) * 100
+            
+            bar_length = 40
+            filled_length = int(bar_length * bytes_read // file_size)
+            bar = '█' * filled_length + '-' * (bar_length - filled_length)
+            
+            sys.stdout.write(f'\r[{bar}] {percent:.1f}%')
+            sys.stdout.flush()
+            
+    print()
+    return sha256_hash.hexdigest()
+
 
 def find_database_location(archive):
     re_matches = []
@@ -109,14 +131,20 @@ def main():
     try:
         parser = argparse.ArgumentParser(
             description="""Efterforskningsværktøj til android-databaser fra 'Rema1000 | Scan & Go'.
-Stier kan være fulde eller relative.
+Script-argumenter kan ikke auto-complete med tabulator, men det kan stier.
             """,
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
-            python3 rema1000_forensics.py --archive <sti/til/filnavn.zip> --yderligere-argumenter <argument>
-            Eksempel:
-            python3 rema1000_forensics.py --archive /home/peter/Downloads/android.zip --sha256
-            python3 rema1000_forensics.py --archive ~/Documents/AFU.zip --search
+Stier kan være fulde eller relative.
+Brugseksempler:
+python3 rema1000_forensics.py --archive (sti)/fil.zip --sha256
+python3 rema1000_forensics.py --archive (sti/fil.zip) --search
+python3 rema1000_forensics.py --archive (sti/fil.zip) --extract
+python3 rema1000_forensics.py --archive (sti/fil.zip) --output_location (sti) --extract
+python3 rema1000_forensics.py --get_database_tables (database)
+python3 rema1000_forensics.py --get_table_headers (database) (table-navn)
+python3 rema1000_forensics.py --get_table_content (database) (table-navn)
+python3 rema1000_forensics.py --get_table_content (database) (table-navn) (antal rækker)
             """
         )
         
@@ -131,7 +159,7 @@ Stier kan være fulde eller relative.
             "--output_location",
             default=None,
             metavar=("PATH/TO/OUTPUT/FOLDER/"),
-            help="Angiv stien hvor dataen skal gemmes"
+            help="Angiv stien hvor dataen skal gemmes."
         )
         
         parser.add_argument(
@@ -149,7 +177,7 @@ Stier kan være fulde eller relative.
         parser.add_argument(
             "--extract",
             action="store_true",
-            help="Udhent filen til tmp/%%TEMP%%, afhængig af OS, eller til en specificeret lokation (hvis brugt med --output-location)"
+            help="Denne kræver '--archive FIL'. Udhent databaser fra den angivne zip-fil til tmp/%%TEMP%%, afhængig af OS, eller til en specificeret lokation (hvis brugt med --output-location)."
         )
         
         parser.add_argument(
@@ -171,15 +199,14 @@ Stier kan være fulde eller relative.
             "--get_table_content",
             default=None,
             nargs=3,
-            metavar=("DATABASE","TABLE","ROW_AMOUNT"),
+            metavar=("DATABASE","TABLE","(ROW_AMOUNT)"),
             help="Bruges til at udhente alt fra en db-table. Specificer database, table og antal rækker der skal outputtes i terminalen. Brug 0 som diste argument, for at få printet samtlige rækker i tabellen."
         )
         
         args = parser.parse_args()
             
         if args.sha256sum:
-            print(f"Udregner SHA256-sum af: {args.archive}")
-            print(calculate_sha256sum(args.archive))
+            print(f"SHA-256-sum af {args.archive}: {calculate_sha256sum(args.archive)}")
             
         if args.search:
             print(f"Søger i: {args.archive}")
