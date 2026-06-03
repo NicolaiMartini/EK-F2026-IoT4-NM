@@ -65,5 +65,5 @@ def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):
                     prettified_list[6]=list_row[6]
                     entries_list.append(prettified_list)
                 return data_headers, entries_list, source_path
-    else:
-        logfunc('No Rema1000 | Scan & Go data available')
+            else:
+                logfunc('No Rema1000 | Scan & Go data available')
