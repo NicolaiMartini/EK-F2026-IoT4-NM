@@ -17,14 +17,14 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from scripts.ilapfuncs import artifact_processor, open_sqlite_db_readonly, get_file_path, logfunc
 
-available_products=[]
+
 
 @artifact_processor
 def get_receipts_prettified(files_found, report_folder, seeker, wrap_text):  
+    available_products=[]
     source_path = get_file_path(files_found, "receipts.db")  
     for file_found in files_found:
         if file_found.endswith('shopdatabase.db'):
-            global available_products
             prod_db=open_sqlite_db_readonly(file_found)
             prod_cur=prod_db.cursor()
             prod_cur.execute(f"""

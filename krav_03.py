@@ -4,7 +4,7 @@ import datetime
 if __name__ == "__main__":
     try:
         print("EXTRACTING TO SPECIFIED LOCATION")
-        for database in backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$",f"/tmp/{datetime.datetime.now()}/"):
+        for database in backend.get_known_databases("AFU.zip",r".*rema1000.*\/databases\/.*\.db.*$",f"/tmp/{datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")}/"):
             if database.endswith('.db'):
                 print(database)
                 print(backend.get_db_tables(database))

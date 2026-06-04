@@ -89,12 +89,15 @@ def get_table_headers(database, table):
     """
     Retrieve the table headers of the specified table.
     """
-    with sqlite3.connect(database) as sql:
-        cur = sql.cursor()
-        cur.execute(f"SELECT * FROM {table};")
-        column_names = [description[0] for description in cur.description]
-        return column_names
-
+    try:
+        with sqlite3.connect(database) as sql:
+            cur = sql.cursor()
+            cur.execute(f"SELECT * FROM {table};")
+            column_names = [description[0] for description in cur.description]
+            return column_names
+    except Exception as e:
+        print(e)
+        
 
 def get_table_content(database, table):
     """
