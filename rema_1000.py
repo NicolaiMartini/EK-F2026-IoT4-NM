@@ -61,7 +61,7 @@ def rema1000_receipt_raw(files_found, report_folder, seeker, wrap_text):
                     entries_list.append(list_row)
                 return data_headers, entries_list, source_path
             else:
-                logfunc('No Rema1000 | Scan & Go data available')
+                logfunc("No Rema1000 | Scan & Go data available")
 
 
 @artifact_processor
@@ -106,7 +106,7 @@ def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
                         if list_row[i] is None:
                             list_row[i]="None"
                     prettified_list[0]=f"{datetime.fromtimestamp(list_row[0]/1000, tz=ZoneInfo('Europe/Copenhagen')).strftime('%Y-%m-%d %H:%M:%S')}"
-                    prettified_list[1]= f"{list_row[3].split(";")[1].capitalize()}, {list_row[4]}, {list_row[3].split(";")[2].capitalize()}"
+                    prettified_list[1]= f"{list_row[3].split(';')[1].capitalize()}, {list_row[4]}, {list_row[3].split(';')[2].capitalize()}"
                     split_items = [item.translate(translation_table) for item in list_row[3].split(";")[3:]]
                     prettified_list[2]=", ".join([item for item in split_items if item in available_products])
                     prettified_list[3]=f"{list_row[2]/100:.2f}"
@@ -116,4 +116,4 @@ def rema1000_receipt_prettified(files_found, report_folder, seeker, wrap_text):
                     entries_list.append(prettified_list)
                 return data_headers, entries_list, source_path
             else:
-                logfunc('No Rema1000 | Scan & Go data available')
+                logfunc("No Rema1000 | Scan & Go data available")
